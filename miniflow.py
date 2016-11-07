@@ -1,7 +1,7 @@
 """
 You need to change the Add() class below.
 """
-
+from functools import reduce
 
 class Neuron:
     def __init__(self, inbound_neurons=[]):
@@ -58,8 +58,8 @@ class Input(Neuron):
 
 
 class Add(Neuron):
-    def __init__(self, x, y):
-        Neuron.__init__(self, [x, y])
+    def __init__(self, *inputs):
+        Neuron.__init__(self, [*inputs])
 
     def forward(self):
         """
@@ -68,6 +68,18 @@ class Add(Neuron):
         Your code here!
         """
         self.value = sum([neuron.value for neuron in self.inbound_neurons])
+
+class Mul(Neuron):
+    def __init__(self, *inputs):
+        Neuron.__init__(self, [*inputs])
+
+    def forward(self):
+        """
+        Set the value of this neuron to the sum of it's inbound_nodes.
+
+        Your code here!
+        """
+        self.value = reduce(lambda x, y: x * y, map((lambda x: x.value), self.inbound_neurons))
 
 
 """
