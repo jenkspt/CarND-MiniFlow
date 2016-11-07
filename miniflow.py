@@ -67,6 +67,7 @@ class Add(Neuron):
 
         Your code here!
         """
+        self.value = sum([neuron.value for neuron in self.inbound_neurons])
 
 
 """
