@@ -22,7 +22,10 @@ Instructions:
 (Hint: you could use numpy to solve this quiz if you'd like, but it's very possible to solve this with vanilla Python.)
 """
 
-from miniflow import *
+from miniflow import Input
+from miniflow import Linear
+from miniflow import topological_sort
+from miniflow import forward_pass
 
 x, y, z = Input(), Input(), Input()
 inputs = [x, y, z]
@@ -47,4 +50,4 @@ feed_dict = {
 graph = topological_sort(feed_dict)
 output = forward_pass(f, graph)
 
-print(output)  # should be 12.7 with this example
+print('Linear output: ', output)  # should be 12.7 with this example

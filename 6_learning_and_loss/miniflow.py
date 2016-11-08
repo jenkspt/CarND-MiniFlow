@@ -2,7 +2,6 @@
 Write the Linear#forward method below!
 """
 
-
 class Neuron:
     def __init__(self, inbound_neurons=[]):
         # Neurons from which this Node receives values
@@ -59,6 +58,7 @@ class Linear(Neuron):
 
         Your code goes here!
         """
+        self.value = sum([(xi.value*wi.value) for xi, wi in zip(self.inbound_neurons, self.weights)])+self.bias.value
 
 
 def topological_sort(feed_dict):
