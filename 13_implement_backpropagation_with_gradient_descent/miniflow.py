@@ -37,14 +37,14 @@ class Layer:
         for layer in inbound_layers:
             layer.outbound_layers.append(self)
 
-    def forward():
+    def forward(self):
         """
         Every layer that uses this class as a base class will
         need to define its own `forward` method.
         """
         raise NotImplementedError
 
-    def backward():
+    def backward(self):
         """
         Every layer that uses this class as a base class will
         need to define its own `backward` method.
@@ -92,9 +92,16 @@ class Linear(Layer):
         """
         Performs the math behind a linear transform.
         """
+        # X
         inputs = self.inbound_layers[0].value
+
+        # W
         weights = self.inbound_layers[1].value
+
+        # b
         bias = self.inbound_layers[2].value
+
+        # Z = XW + b
         self.value = np.dot(inputs, weights) + bias
 
     def backward(self):
@@ -108,11 +115,40 @@ class Linear(Layer):
         for n in self.outbound_layers:
             # Get the partial of the cost with respect to this layer.
             grad_cost = n.gradients[self]
-            # Set the partial of the loss with respect to this layer's inputs.
+
+            """
+                d_C/d_X = (d_C/d_Z) * W_T
+
+                The derivative of C with respect to X is the dot product of the
+                derivative of C with respect to Z and the transpose of the matrix W.
+
+                https://d17h27t6h515a5.cloudfront.net/topher/2016/November/5820f6c0_partial-x/partial-x.png
+            """
+            # partial derivative of X: Set the partial of the loss with respect to this layer's inputs.
             self.gradients[self.inbound_layers[0]] += np.dot(grad_cost, self.inbound_layers[1].value.T)
-            # Set the partial of the loss with respect to this layer's weights.
+
+
+            """
+                d_C/d_W = X_T * (d_C/d_Z)
+
+                The derivative of the cost C with respect to W is the dot product of the transpose of the matrix X
+                and the derivative of C with respect to Z.
+
+                https://d17h27t6h515a5.cloudfront.net/topher/2016/November/5820f6c0_partial-w/partial-w.png
+            """
+            # partial derivative of W: Set the partial of the loss with respect to this layer's weights.
             self.gradients[self.inbound_layers[1]] += np.dot(self.inbound_layers[0].value.T, grad_cost)
-            # Set the partial of the loss with respect to this layer's bias.
+
+
+            """
+                d_C/d_b_l = Σi->m (1 * d_C/d_Z_il)
+
+                The derivative of C with respect to b at the lth element is the summation i to m of the
+                derivative of C with respect to Z at the ith row, lth column.
+
+                https://d17h27t6h515a5.cloudfront.net/topher/2016/November/5820f6bc_partial-bl3/partial-bl3.png
+            """
+            # b: Set the partial of the loss with respect to this layer's bias.
             self.gradients[self.inbound_layers[2]] += np.sum(grad_cost, axis=0, keepdims=False)
 
 
@@ -131,6 +167,7 @@ class Sigmoid(Layer):
 
         `x`: A numpy array-like object.
         """
+        # One of one plust "e" to the negative "x"
         return 1. / (1. + np.exp(-x))
 
     def forward(self):
@@ -154,6 +191,7 @@ class Sigmoid(Layer):
 
         See the linear layer and MSE layer for examples.
         """
+        print(self.gradients)
 
 
 class MSE(Layer):
