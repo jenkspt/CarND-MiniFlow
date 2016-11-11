@@ -269,7 +269,31 @@ def train_SGD(feed_dict, ideal_output, trainables=[], epochs=1, learning_rate=1e
         according to gradient descent!
 
         Your code goes here!
+
+
+            w_prime_i = w_i - (learning_rate * (dC/dw_i))
         """
+
+        # w = trainables[0]
+        # b = trainables[1]
+
+        # w_grad_cost = w.gradients[w]
+        # b_grad_cost = b.gradients[b]
+
+        # w_prime = w.value - (learning_rate * w_grad_cost)
+        # b_prime = b.value - (learning_rate * b_grad_cost)
+
+        # w.value = w_prime
+        # b.value = b_prime
+
+        # Loop over the trainables
+        for t in trainables:
+            # Change the traiable's value by subtacting the learning rate
+            # multiplied by the partial of the cost with respect to this
+            # trainable.
+            partial = t.gradients[t]
+            t.value -= learning_rate * partial
+
         print('Epoch: ' + str(i) + ', Loss: ' + str(sorted_layers[-1].value))
 
     return sorted_layers[-1].value
