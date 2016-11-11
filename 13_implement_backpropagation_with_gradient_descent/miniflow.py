@@ -193,6 +193,21 @@ class Sigmoid(Layer):
         """
         print(self.gradients)
 
+        """
+            The derivative of the sigmoid function actually includes the original function, hence the decision to
+            keep the _sigmoid method separate earlier. To make your life easier, I'll give it to you. However, if you
+            want a fun calculus challenge, I recommend proving that the following equation is true. (σ denotes sigmoid.)
+
+            σ'(x) = σ(x) * (1 - σ(x))
+
+            Equation (4)
+        """
+        sig = (self.value * (1. - self.value))
+
+        for n in self.outbound_layers:
+            grad_cost = n.gradients[self]
+            self.gradients[self.inbound_layers[0]] += sig*grad_cost
+
 
 class MSE(Layer):
     def __init__(self, inbound_layer):
@@ -227,6 +242,15 @@ class MSE(Layer):
         """
         Calculates the gradient of the cost.
         """
+
+        """
+            d_C/d_x = -2(y(x) - a)
+
+            Equation (15)
+
+            https://d17h27t6h515a5.cloudfront.net/topher/2016/October/58121a71_codecogseqn-26/codecogseqn-26.gif
+        """
+
         self.gradients[self.inbound_layers[0]] = -2 * (self.ideal_output - self.computed_output)
 
 
